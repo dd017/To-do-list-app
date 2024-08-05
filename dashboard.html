@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2 class="mt-5">Welcome, {{ current_user.username }}!</h2>
+        <form action="/add" method="post" class="mb-3">
+            <div class="form-row">
+                <div class="col">
+                    <input type="text" class="form-control" name="title" placeholder="Task Title" required>
+                </div>
+                <div class="col">
+                    <input type="date" class="form-control" name="due_date">
+                </div>
+                <div class="col">
+                    <select name="priority" class="form-control">
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" name="category" placeholder="Category">
+                </div>
+                <div class="col">
+                    <button type="submit" class="btn btn-primary">Add Task</button>
+                </div>
+            </div>
+        </form>
+        <ul class="list-group">
+            {% for task in tasks %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ task.title }}</strong> - Due: {{ task.due_date }} - Priority: {{ task.priority }} - Category: {{ task.category }}
+                    </div>
+                    <div>
+                        <a href="/complete/{{ task.id }}" class="btn btn-sm {{ 'btn-success' if not task.completed else 'btn-warning' }}">
+                            {{ 'Complete' if not task.completed else 'Undo' }}
+                        </a>
+                        <a href="/delete/{{ task.id }}" class="btn btn-sm btn-danger">Delete</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        <a href="/logout" class="btn btn-secondary mt-3">Logout</a>
+    </div>
+</body>
+</html>
+<div class="mb-3">
+    <input type="text" id="taskFilter" class="form-control" placeholder="Filter tasks by category" onkeyup="filterTasks()">
+</div>
+<script>
+    function filterTasks() {
+        let input = document.getElementById('taskFilter').value.toLowerCase();
+        let taskItems = document.getElementsByClassName('list-group-item');
+        for (let i = 0; i < taskItems.length; i++) {
+            let item = taskItems[i];
+            if (item.innerHTML.toLowerCase().includes(input)) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        }
+    }
+</script>
